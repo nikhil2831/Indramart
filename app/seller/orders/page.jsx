@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from "react";
-import { assets, orderDummyData } from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/seller/Footer";
@@ -8,13 +8,23 @@ import Loading from "@/components/Loading";
 
 const Orders = () => {
 
-    const { currency } = useAppContext();
+    const { currency, getToken } = useAppContext();
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchSellerOrders = async () => {
-        setOrders(orderDummyData);
+        try {
+            const res = await fetch('/api/seller/orders', {
+                headers: { 'Authorization': `Bearer ${getToken()}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setOrders(data.orders);
+            }
+        } catch (error) {
+            console.error('Error fetching seller orders:', error);
+        }
         setLoading(false);
     }
 
@@ -27,7 +37,9 @@ const Orders = () => {
             {loading ? <Loading /> : <div className="md:p-10 p-4 space-y-5">
                 <h2 className="text-lg font-medium">Orders</h2>
                 <div className="max-w-4xl rounded-md">
-                    {orders.map((order, index) => (
+                    {orders.length === 0 ? (
+                        <p className="text-gray-500 py-8 text-center">No orders yet</p>
+                    ) : orders.map((order, index) => (
                         <div key={index} className="flex flex-col md:flex-row gap-5 justify-between p-5 border-t border-gray-300">
                             <div className="flex-1 flex gap-5 max-w-80">
                                 <Image

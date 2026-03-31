@@ -2,8 +2,12 @@
 import React, { useState } from "react";
 import { assets } from "@/assets/assets";
 import Image from "next/image";
+import { useAppContext } from "@/context/AppContext";
+import toast from "react-hot-toast";
 
 const AddProduct = () => {
+
+  const { getToken } = useAppContext();
 
   const [files, setFiles] = useState([]);
   const [name, setName] = useState('');
@@ -11,10 +15,52 @@ const AddProduct = () => {
   const [category, setCategory] = useState('Earphone');
   const [price, setPrice] = useState('');
   const [offerPrice, setOfferPrice] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
 
+    try {
+      const formData = new FormData();
+      formData.append('name', name);
+      formData.append('description', description);
+      formData.append('category', category);
+      formData.append('price', price);
+      formData.append('offerPrice', offerPrice);
+
+      files.forEach((file, index) => {
+        if (file) {
+          formData.append(`image${index}`, file);
+        }
+      });
+
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${getToken()}`
+        },
+        body: formData
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        toast.success('Product added successfully!');
+        setName('');
+        setDescription('');
+        setPrice('');
+        setOfferPrice('');
+        setFiles([]);
+        setCategory('Earphone');
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error('Failed to add product');
+    }
+
+    setLoading(false);
   };
 
   return (
@@ -84,7 +130,7 @@ const AddProduct = () => {
               id="category"
               className="outline-none md:py-2.5 py-2 px-3 rounded border border-gray-500/40"
               onChange={(e) => setCategory(e.target.value)}
-              defaultValue={category}
+              value={category}
             >
               <option value="Earphone">Earphone</option>
               <option value="Headphone">Headphone</option>
@@ -124,11 +170,14 @@ const AddProduct = () => {
             />
           </div>
         </div>
-        <button type="submit" className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded">
-          ADD
+        <button
+          type="submit"
+          disabled={loading}
+          className="px-8 py-2.5 bg-orange-600 text-white font-medium rounded disabled:opacity-50"
+        >
+          {loading ? 'Adding...' : 'ADD'}
         </button>
       </form>
-      {/* <Footer /> */}
     </div>
   );
 };

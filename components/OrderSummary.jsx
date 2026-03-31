@@ -1,17 +1,29 @@
-import { addressDummyData } from "@/assets/assets";
 import { useAppContext } from "@/context/AppContext";
 import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 
 const OrderSummary = () => {
 
-  const { currency, router, getCartCount, getCartAmount } = useAppContext()
+  const { currency, router, getCartCount, getCartAmount, getToken } = useAppContext()
   const [selectedAddress, setSelectedAddress] = useState(null);
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-
   const [userAddresses, setUserAddresses] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   const fetchUserAddresses = async () => {
-    setUserAddresses(addressDummyData);
+    try {
+      const currentToken = getToken();
+      if (!currentToken) return;
+      const res = await fetch('/api/address', {
+        headers: { 'Authorization': `Bearer ${currentToken}` }
+      });
+      const data = await res.json();
+      if (data.success) {
+        setUserAddresses(data.addresses);
+      }
+    } catch (error) {
+      console.error('Error fetching addresses:', error);
+    }
   }
 
   const handleAddressSelect = (address) => {
@@ -20,7 +32,42 @@ const OrderSummary = () => {
   };
 
   const createOrder = async () => {
+    if (!selectedAddress) {
+      toast.error('Please select a delivery address');
+      return;
+    }
 
+    const currentToken = getToken();
+    if (!currentToken) {
+      toast.error('Please login to place order');
+      router.push('/login');
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${currentToken}`
+        },
+        body: JSON.stringify({ addressId: selectedAddress._id })
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        router.push('/order-placed');
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error('Failed to place order');
+    }
+
+    setLoading(false);
   }
 
   useEffect(() => {
@@ -115,8 +162,12 @@ const OrderSummary = () => {
         </div>
       </div>
 
-      <button onClick={createOrder} className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700">
-        Place Order
+      <button
+        onClick={createOrder}
+        disabled={loading}
+        className="w-full bg-orange-600 text-white py-3 mt-5 hover:bg-orange-700 disabled:opacity-50"
+      >
+        {loading ? 'Placing Order...' : 'Place Order'}
       </button>
     </div>
   );

@@ -1,6 +1,6 @@
 'use client';
 import React, { useEffect, useState } from "react";
-import { assets, orderDummyData } from "@/assets/assets";
+import { assets } from "@/assets/assets";
 import Image from "next/image";
 import { useAppContext } from "@/context/AppContext";
 import Footer from "@/components/Footer";
@@ -9,13 +9,28 @@ import Loading from "@/components/Loading";
 
 const MyOrders = () => {
 
-    const { currency } = useAppContext();
+    const { currency, getToken } = useAppContext();
 
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
 
     const fetchOrders = async () => {
-        setOrders(orderDummyData)
+        try {
+            const currentToken = getToken();
+            if (!currentToken) {
+                setLoading(false);
+                return;
+            }
+            const res = await fetch('/api/orders', {
+                headers: { 'Authorization': `Bearer ${currentToken}` }
+            });
+            const data = await res.json();
+            if (data.success) {
+                setOrders(data.orders);
+            }
+        } catch (error) {
+            console.error('Error fetching orders:', error);
+        }
         setLoading(false);
     }
 
@@ -30,7 +45,9 @@ const MyOrders = () => {
                 <div className="space-y-5">
                     <h2 className="text-lg font-medium mt-6">My Orders</h2>
                     {loading ? <Loading /> : (<div className="max-w-5xl border-t border-gray-300 text-sm">
-                        {orders.map((order, index) => (
+                        {orders.length === 0 ? (
+                            <p className="text-gray-500 py-8 text-center">No orders yet. Start shopping!</p>
+                        ) : orders.map((order, index) => (
                             <div key={index} className="flex flex-col md:flex-row gap-5 justify-between p-5 border-b border-gray-300">
                                 <div className="flex-1 flex gap-5 max-w-80">
                                     <Image
