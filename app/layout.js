@@ -6,14 +6,14 @@ import { Toaster } from "react-hot-toast";
 const outfit = Outfit({ subsets: ['latin'], weight: ["300", "400", "500"] })
 
 export const metadata = {
-  title: "IndraMart - GreatStack",
+  title: "Indra Mart",
   description: "E-Commerce with Next.js ",
 };
 
 export default function RootLayout({ children }) {
   return (
-      <html lang="en">
-        <body className={`${outfit.className} antialiased text-gray-700`} >
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${outfit.className} antialiased text-gray-700`} suppressHydrationWarning>
           <Toaster />
           <AppContextProvider>
             {children}

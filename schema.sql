@@ -128,4 +128,4 @@ INSERT INTO product_images (product_id, image_url, sort_order) VALUES
 
 -- Demo Address
 INSERT INTO addresses (user_id, full_name, phone_number, pincode, area, city, state) VALUES
-(2, 'Demo User', '0123456789', '654321', 'Main Road, 123 Street, G Block', 'Mumbai', 'Maharashtra');
+(2, 'Demo User', '9876543210', '654321', 'Main Road, 123 Street, G Block', 'Mumbai', 'Maharashtra');

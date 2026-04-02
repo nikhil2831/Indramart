@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     images: {
+        // Avoid server-side fetch/optimization for external image hosts.
+        // This prevents ENOTFOUND crashes when GitHub raw host is unreachable.
+        unoptimized: true,
         remotePatterns: [
             {
                 protocol: 'https',

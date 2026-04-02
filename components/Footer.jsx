@@ -9,10 +9,8 @@ const Footer = () => {
         <div className="w-4/5">
           <Image className="w-28 md:w-32" src={assets.logo} alt="logo" />
           <p className="mt-6 text-sm">
-            Lorem Ipsum is simply dummy text of the printing and typesetting
-            industry. Lorem Ipsum has been the industry's standard dummy text
-            ever since the 1500s, when an unknown printer took a galley of type
-            and scrambled it to make a type specimen book.
+           Indramart is an emerging digital marketplace that aims to provide a reliable and convenient online shopping experience.The company focuses on connecting customers with quality products through modern technology and efficient services.
+           
           </p>
         </div>
 
@@ -40,14 +38,14 @@ const Footer = () => {
           <div>
             <h2 className="font-medium text-gray-900 mb-5">Get in touch</h2>
             <div className="text-sm space-y-2">
-              <p>+1-234-567-890</p>
-              <p>contact@greatstack.dev</p>
+              <p>+91 98765 43210</p>
+              <p>contact@indramart.in</p>
             </div>
           </div>
         </div>
       </div>
       <p className="py-4 text-center text-xs md:text-sm">
-        Copyright 2025 © GreatStack.dev All Right Reserved.
+        Copyright 2025 © Indra Mart. All Right Reserved.
       </p>
     </footer>
   );
