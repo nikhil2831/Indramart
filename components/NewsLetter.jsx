@@ -12,11 +12,16 @@ const NewsLetter = () => {
       </p>
       <div className="flex items-center justify-between max-w-2xl w-full md:h-14 h-12">
         <input
+          suppressHydrationWarning
           className="border border-gray-500/30 rounded-md h-full border-r-0 outline-none w-full rounded-r-none px-3 text-gray-500"
-          type="text"
+          type="email"
           placeholder="Enter your email id"
         />
-        <button className="md:px-12 px-8 h-full text-white bg-orange-600 rounded-md rounded-l-none">
+        <button
+          suppressHydrationWarning
+          type="button"
+          className="md:px-12 px-8 h-full text-white bg-orange-600 rounded-md rounded-l-none"
+        >
           Subscribe
         </button>
       </div>
