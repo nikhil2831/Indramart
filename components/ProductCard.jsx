@@ -20,7 +20,10 @@ const ProductCard = ({ product }) => {
                     width={800}
                     height={800}
                 />
-                <button className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md">
+                <button
+                    suppressHydrationWarning
+                    className="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md"
+                >
                     <Image
                         className="h-3 w-3"
                         src={assets.heart_icon}
@@ -51,7 +54,10 @@ const ProductCard = ({ product }) => {
 
             <div className="flex items-end justify-between w-full mt-1">
                 <p className="text-base font-medium">{currency}{product.offerPrice}</p>
-                <button className=" max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition">
+                <button
+                    suppressHydrationWarning
+                    className=" max-sm:hidden px-4 py-1.5 text-gray-500 border border-gray-500/20 rounded-full text-xs hover:bg-slate-50 transition"
+                >
                     Buy now
                 </button>
             </div>
