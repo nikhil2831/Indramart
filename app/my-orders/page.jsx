@@ -75,11 +75,23 @@ const MyOrders = () => {
                                 </div>
                                 <p className="font-medium my-auto">{currency}{order.amount}</p>
                                 <div>
-                                    <p className="flex flex-col">
+                                    <p className="flex flex-col gap-1">
                                         <span>Method : COD</span>
                                         <span>Date : {new Date(order.date).toLocaleDateString()}</span>
-                                        <span>Payment : Pending</span>
+                                        <span>Payment : <span className={order.status === 'Delivered' ? 'text-green-600 font-medium' : 'text-orange-600 font-medium'}>{order.status === 'Delivered' ? 'Paid' : 'Pending'}</span></span>
                                     </p>
+                                </div>
+                                <div className="flex flex-col justify-center items-start md:items-end gap-1.5 my-auto">
+                                    <div className="flex items-center gap-2">
+                                        <span className={`h-2.5 w-2.5 rounded-full ${
+                                            order.status === 'Delivered' ? 'bg-green-500' :
+                                            order.status === 'Out for Delivery' ? 'bg-indigo-500' :
+                                            order.status === 'Shipped' ? 'bg-purple-500' :
+                                            order.status === 'Packing' ? 'bg-yellow-500' : 'bg-orange-500'
+                                        }`}></span>
+                                        <span className="font-semibold text-gray-800 text-sm">{order.status}</span>
+                                    </div>
+                                    <button onClick={fetchOrders} className="text-xs border px-3 py-1 rounded hover:bg-gray-50 transition">Track Order</button>
                                 </div>
                             </div>
                         ))}

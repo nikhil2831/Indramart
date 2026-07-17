@@ -77,3 +77,36 @@ export async function GET(request) {
         return NextResponse.json({ success: false, message: error.message }, { status: 500 });
     }
 }
+
+// PUT update order status (seller only)
+export async function PUT(request) {
+    try {
+        const decoded = verifyToken(request);
+        if (!decoded) {
+            return NextResponse.json({ success: false, message: 'Unauthorized' }, { status: 401 });
+        }
+
+        // Verify seller role
+        const [users] = await pool.query('SELECT role FROM users WHERE id = ?', [decoded.userId]);
+        if (users.length === 0 || users[0].role !== 'seller') {
+            return NextResponse.json({ success: false, message: 'Seller access required' }, { status: 403 });
+        }
+
+        const { orderId, status } = await request.json();
+        if (!orderId || !status) {
+            return NextResponse.json({ success: false, message: 'OrderId and status are required' }, { status: 400 });
+        }
+
+        const validStatuses = ['Order Placed', 'Packing', 'Shipped', 'Out for Delivery', 'Delivered'];
+        if (!validStatuses.includes(status)) {
+            return NextResponse.json({ success: false, message: 'Invalid status' }, { status: 400 });
+        }
+
+        // Update status of order
+        await pool.query('UPDATE orders SET status = ? WHERE id = ?', [status, orderId]);
+
+        return NextResponse.json({ success: true, message: 'Order status updated successfully' });
+    } catch (error) {
+        return NextResponse.json({ success: false, message: error.message }, { status: 500 });
+    }
+}
